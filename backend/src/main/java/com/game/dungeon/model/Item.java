@@ -9,8 +9,8 @@ public class Item {
     private String hint;
 
     public enum ItemType {
-        TEACHER,    // Asks questions
-        FRIEND,     // Gives hints
+        TEACHER,
+        FRIEND,
         EMPTY
     }
 } 
