@@ -27,10 +27,6 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Game createGame(String playerName, Game.GameLevel level) {
-        if (playerName == null || playerName.trim().isEmpty()) {
-            throw new InvalidGameStateException("Player name cannot be empty");
-        }
-
         Game game = new Game();
         game.setPlayerName(playerName);
         game.setLevel(level);
@@ -38,8 +34,15 @@ public class GameServiceImpl implements GameService {
         game.setStatus(Game.GameStatus.IN_PROGRESS);
         game.setStartedAt(Instant.now());
         game.setLastSavedAt(Instant.now());
-        game.setInventory(new Inventory());
+        
+        Inventory inventory = new Inventory();
+        inventory.setHints(new ArrayList<>());
+        inventory.setAnsweredQuestions(new ArrayList<>());
+        game.setInventory(inventory);
+        
         game.setMap(generateMap(level.getMapSize()));
+        
+        game.setCurrentPosition(new Game.Position(0, 0));
         
         return gameRepository.save(game);
     }
@@ -57,14 +60,25 @@ public class GameServiceImpl implements GameService {
             throw new InvalidGameStateException("Game is not in progress");
         }
 
+        Game.Position newPosition = calculateNewPosition(game.getCurrentPosition(), direction);
+        
+        validateMove(game, newPosition);
+        
+        game.setCurrentPosition(newPosition);
+        Cell currentCell = getCellAt(game.getMap(), newPosition.getX(), newPosition.getY());
+        currentCell.setExplored(true);
+        
         game.setPowerPoints(game.getPowerPoints() - moveCost);
         if (game.getPowerPoints() <= 0) {
             game.setStatus(Game.GameStatus.LOST);
             throw new InvalidGameStateException("Game over: Out of power points");
         }
 
+        if (currentCell.getType() == Cell.CellType.TREASURE) {
+            game.setStatus(Game.GameStatus.WON);
+        }
+
         game.setLastSavedAt(Instant.now());
-        
         return gameRepository.save(game);
     }
 
@@ -86,7 +100,7 @@ public class GameServiceImpl implements GameService {
             game.setPowerPoints(game.getPowerPoints() - question.getPoints());
             if (game.getPowerPoints() <= 0) {
                 game.setStatus(Game.GameStatus.LOST);
-                throw new InvalidGameStateException("Game over: Out of power points");
+                throw new InvalidGameStateException("Game over: Wrong answer depleted power points");
             }
         }
 
@@ -148,5 +162,38 @@ public class GameServiceImpl implements GameService {
         }
         
         return item;
+    }
+
+    private Game.Position calculateNewPosition(Game.Position current, Direction direction) {
+        int newX = current.getX();
+        int newY = current.getY();
+        
+        switch (direction) {
+            case UP -> newY--;
+            case DOWN -> newY++;
+            case LEFT -> newX--;
+            case RIGHT -> newX++;
+        }
+        
+        return new Game.Position(newX, newY);
+    }
+
+    private void validateMove(Game game, Game.Position newPosition) {
+        if (newPosition.getX() < 0 || newPosition.getX() >= game.getMap().getSize() ||
+            newPosition.getY() < 0 || newPosition.getY() >= game.getMap().getSize()) {
+            throw new InvalidGameStateException("Cannot move outside the map boundaries");
+        }
+        
+        Cell targetCell = getCellAt(game.getMap(), newPosition.getX(), newPosition.getY());
+        if (targetCell.getType() == Cell.CellType.WALL) {
+            throw new InvalidGameStateException("Cannot move through walls");
+        }
+    }
+
+    private Cell getCellAt(GameMap map, int x, int y) {
+        return map.getCells().stream()
+            .filter(cell -> cell.getX() == x && cell.getY() == y)
+            .findFirst()
+            .orElseThrow(() -> new InvalidGameStateException("Invalid cell position"));
     }
 } 
