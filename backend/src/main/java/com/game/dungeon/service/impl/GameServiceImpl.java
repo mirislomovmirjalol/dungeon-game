@@ -1,5 +1,7 @@
 package com.game.dungeon.service.impl;
 
+import com.game.dungeon.exception.InvalidGameStateException;
+import com.game.dungeon.exception.ResourceNotFoundException;
 import com.game.dungeon.model.*;
 import com.game.dungeon.repository.GameRepository;
 import com.game.dungeon.repository.QuestionRepository;
@@ -25,6 +27,10 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Game createGame(String playerName, Game.GameLevel level) {
+        if (playerName == null || playerName.trim().isEmpty()) {
+            throw new InvalidGameStateException("Player name cannot be empty");
+        }
+
         Game game = new Game();
         game.setPlayerName(playerName);
         game.setLevel(level);
@@ -41,19 +47,20 @@ public class GameServiceImpl implements GameService {
     @Override
     public Game getGame(String gameId) {
         return gameRepository.findById(gameId)
-            .orElseThrow(() -> new RuntimeException("Game not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Game", gameId));
     }
 
     @Override
     public Game movePlayer(String gameId, Direction direction) {
         Game game = getGame(gameId);
         if (game.getStatus() != Game.GameStatus.IN_PROGRESS) {
-            throw new RuntimeException("Game is not in progress");
+            throw new InvalidGameStateException("Game is not in progress");
         }
 
         game.setPowerPoints(game.getPowerPoints() - moveCost);
         if (game.getPowerPoints() <= 0) {
             game.setStatus(Game.GameStatus.LOST);
+            throw new InvalidGameStateException("Game over: Out of power points");
         }
 
         game.setLastSavedAt(Instant.now());
@@ -65,7 +72,11 @@ public class GameServiceImpl implements GameService {
     public Game answerQuestion(String gameId, String questionId, String answer) {
         Game game = getGame(gameId);
         Question question = questionRepository.findById(questionId)
-            .orElseThrow(() -> new RuntimeException("Question not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Question", questionId));
+
+        if (game.getStatus() != Game.GameStatus.IN_PROGRESS) {
+            throw new InvalidGameStateException("Game is not in progress");
+        }
 
         boolean isCorrect = question.getCorrectAnswer().equals(answer);
         if (isCorrect) {
@@ -75,6 +86,7 @@ public class GameServiceImpl implements GameService {
             game.setPowerPoints(game.getPowerPoints() - question.getPoints());
             if (game.getPowerPoints() <= 0) {
                 game.setStatus(Game.GameStatus.LOST);
+                throw new InvalidGameStateException("Game over: Out of power points");
             }
         }
 
