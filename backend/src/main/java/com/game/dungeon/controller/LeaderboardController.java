@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/leaderboard")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "${app.cors.allowed-origins:http://localhost:5173}")
+@CrossOrigin(origins = "http://localhost:5173")
 public class LeaderboardController {
     private final LeaderboardRepository leaderboardRepository;
 
