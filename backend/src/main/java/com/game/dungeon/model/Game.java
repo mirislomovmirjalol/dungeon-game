@@ -16,9 +16,21 @@ public class Game {
     private int powerPoints;
     private GameMap map;
     private Inventory inventory;
+    private Position currentPosition;
     private Instant startedAt;
     private Instant lastSavedAt;
     private GameStatus status;
+
+    @Data
+    public static class Position {
+        private int x;
+        private int y;
+
+        public Position(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
 
     public enum GameLevel {
         EASY(10),
