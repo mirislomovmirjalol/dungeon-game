@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/questions")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "${app.cors.allowed-origins:http://localhost:3000}")
+@CrossOrigin(origins = "${app.cors.allowed-origins:http://localhost:5173}")
 public class QuestionController {
     private final QuestionRepository questionRepository;
 

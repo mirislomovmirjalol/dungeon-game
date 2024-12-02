@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/games")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "${app.cors.allowed-origins:http://localhost:3000}")
 public class GameController {
     private final GameService gameService;
 
