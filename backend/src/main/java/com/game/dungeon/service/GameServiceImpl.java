@@ -61,6 +61,8 @@ public class GameServiceImpl implements GameService {
             throw new InvalidGameStateException("You must answer the current question before moving");
         }
 
+        game.setMessage(null);
+
         Position newPosition = calculateNewPosition(game.getCurrentPosition(), direction);
         validateMove(game, newPosition);
 
@@ -295,22 +297,19 @@ public class GameServiceImpl implements GameService {
 
         switch (cell.getItem().getType()) {
             case TEACHER -> {
-                Question question = getRandomQuestion();
+                String questionId = cell.getItem().getQuestionId();
+                Question question = questionRepository.findById(questionId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Question", questionId));
                 game.setCurrentQuestion(question);
                 game.getUsedQuestionIds().add(question.getId());
             }
             case FRIEND -> {
-                String hint = "This is a helpful hint!";
-                game.getInventory().getHints().add(hint);
+                game.getInventory().getHints().add(cell.getItem().getHint());
+                game.setMessage("You found a friend! They gave you a hint: " + cell.getItem().getHint());
                 cell.setItem(null);
             }
             default -> cell.setItem(null);
         }
-    }
-
-    private Question getRandomQuestion() {
-        List<Question> questions = questionRepository.findAll();
-        return questions.get(random.nextInt(questions.size()));
     }
 
     private void handleGameOver(Game game, Game.GameStatus status) {
