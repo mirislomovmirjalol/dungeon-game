@@ -1,34 +1,52 @@
 package com.game.dungeon.factory;
 
 import com.game.dungeon.model.Item;
+import com.game.dungeon.model.Question;
+import com.game.dungeon.repository.QuestionRepository;
 import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Random;
 
 @Component
+@RequiredArgsConstructor
 public class ItemFactory {
     private final Random random = new Random();
+    private final QuestionRepository questionRepository;
 
-    public Item createItem(String difficulty) {
+    public Item createItem(String difficulty, List<String> usedQuestionIds, boolean isFriend) {
         Item item = new Item();
-        double chance = random.nextDouble();
 
-        if (adjustProbability(chance, difficulty) < 0.4) {
-            item.setType(Item.ItemType.EMPTY);
-        } else if (adjustProbability(chance, difficulty) < 0.7) {
+        item.setType(isFriend ? Item.ItemType.FRIEND : Item.ItemType.EMPTY);
+
+        if (isFriend) {
+            Question question = getRandomUnusedQuestion(usedQuestionIds);
+            if (question != null) {
+                item.setType(Item.ItemType.FRIEND);
+                item.setHint(question.getExplanation());
+            }
+        }
+
+        Question question = getRandomUnusedQuestion(usedQuestionIds);
+        if (question != null) {
             item.setType(Item.ItemType.TEACHER);
-        } else {
-            item.setType(Item.ItemType.FRIEND);
+            item.setQuestionId(question.getId());
         }
 
         return item;
     }
 
-    private double adjustProbability(double chance, String difficulty) {
-        return switch (difficulty.toUpperCase()) {
-            case "EASY" -> chance * 1.2;
-            case "HARD" -> chance * 0.8;
-            default -> chance;
-        };
+    private Question getRandomUnusedQuestion(List<String> usedQuestionIds) {
+        List<Question> availableQuestions = questionRepository.findAll()
+                .stream()
+                .filter(q -> !usedQuestionIds.contains(q.getId()))
+                .toList();
+
+        if (availableQuestions.isEmpty()) {
+            return null;
+        }
+
+        return availableQuestions.get(random.nextInt(availableQuestions.size()));
     }
-} 
+}
