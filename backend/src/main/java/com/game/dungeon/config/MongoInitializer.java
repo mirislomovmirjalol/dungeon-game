@@ -5,17 +5,21 @@ import com.game.dungeon.repository.QuestionRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Configuration
 public class MongoInitializer {
+        Logger logger = LoggerFactory.getLogger(MongoInitializer.class);
 
         @Bean
         CommandLineRunner init(QuestionRepository repository) {
                 return args -> {
                         repository.deleteAll();
+                        logger.info("Deleted all questions");
 
                         // this code can be optimized by using csv file or mongodb seeding
                         List<Question> questions = Arrays.asList(
@@ -659,8 +663,7 @@ public class MongoInitializer {
                                                         15));
 
                         repository.saveAll(questions);
-
-                        System.out.println("Questions saved: " + questions.size());
+                        logger.info("Questions saved: " + questions.size());
                 };
         }
 
