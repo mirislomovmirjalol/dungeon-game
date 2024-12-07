@@ -26,6 +26,7 @@ public class ItemFactory {
                 item.setType(Item.ItemType.FRIEND);
                 item.setHint(question.getExplanation());
             }
+            return item;
         }
 
         Question question = getRandomUnusedQuestion(usedQuestionIds);
