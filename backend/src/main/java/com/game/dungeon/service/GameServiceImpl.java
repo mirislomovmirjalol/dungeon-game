@@ -71,6 +71,7 @@ public class GameServiceImpl implements GameService {
         }
 
         Cell currentCell = findCell(game.getMap(), newPosition);
+        Position previousPosition = game.getCurrentPosition();
         game.setCurrentPosition(newPosition);
         currentCell.setExplored(true);
 
@@ -88,8 +89,10 @@ public class GameServiceImpl implements GameService {
                     case MEDIUM -> 2;
                     case HARD -> 3;
                 };
-                throw new InvalidGameStateException(
-                        "You need to answer at least " + requiredQuestions + " questions correctly before exiting!");
+                game.setMessage(
+                        "You found the exit but you need to answer at least " + requiredQuestions
+                                + " questions correctly before exiting!");
+                game.setCurrentPosition(previousPosition);
             }
             return game;
         }

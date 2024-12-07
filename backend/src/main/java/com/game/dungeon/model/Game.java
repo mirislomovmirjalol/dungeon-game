@@ -26,6 +26,7 @@ public class Game {
     private int correctAnswers;
     private List<String> usedQuestionIds = new ArrayList<>();
     private int score;
+    private String message;
 
     public void updateScore() {
         int baseScore = level.getMapSize() * 100;
