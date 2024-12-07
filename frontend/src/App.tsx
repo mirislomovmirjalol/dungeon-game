@@ -6,6 +6,7 @@ import { StartDialog } from './components/StartDialog';
 import { GameInfoBar } from './components/GameInfoBar';
 import { CurrentQuestionDialog } from './components/CurrentQuestionDialog';
 import { GameOverDialog } from './components/GameOverDialog';
+import { LeaderBoardDialog } from './components/LeaderBoardDialog';
 
 export default function App() {
   const {
@@ -27,6 +28,9 @@ export default function App() {
     <Container>
       <Flex direction="column" gap="4" style={{ padding: '20px' }}>
         <Heading align="center" size="6">Dungeon Game</Heading>
+        <Flex justify="end">
+          <LeaderBoardDialog />
+        </Flex>
 
         {error && (
           <Text color="red" size="2" align="center">
