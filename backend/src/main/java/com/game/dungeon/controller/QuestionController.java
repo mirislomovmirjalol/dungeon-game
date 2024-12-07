@@ -11,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/questions")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class QuestionController {
     private final QuestionRepository questionRepository;
 
@@ -35,4 +34,4 @@ public class QuestionController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-} 
+}
