@@ -12,9 +12,14 @@ public class Cell {
 
     public enum CellType {
         EMPTY,
-        WALL,
         ENTRANCE,
         EXIT,
-        TREASURE
+        TEACHER,
+        WALL,
+        FRIEND
     }
-} 
+
+    public void setType(CellType type) {
+        this.type = type;
+    }
+}

@@ -40,7 +40,7 @@ public class Game {
             case MEDIUM -> 3; // Medium level requires 3 questions
             case HARD -> 5; // Hard level requires 5 questions
         };
-        return questionsAnswered >= requiredQuestions;
+        return correctAnswers >= requiredQuestions;
     }
 
     @Data

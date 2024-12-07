@@ -177,7 +177,7 @@ public class GameServiceImpl implements GameService {
         for (int y = 0; y < map.getSize(); y++) {
             for (int x = 0; x < map.getSize(); x++) {
                 if (cells.get(y * map.getSize() + x).getType() == Cell.CellType.ENTRANCE) {
-                    return new Position(x, y);
+                    return new Position(y, x);
                 }
             }
         }
@@ -208,6 +208,7 @@ public class GameServiceImpl implements GameService {
         } while (exit.getX() == entrance.getX());
 
         findCell(map, entrance).setType(Cell.CellType.ENTRANCE);
+        findCell(map, entrance).setExplored(true);
         findCell(map, exit).setType(Cell.CellType.EXIT);
 
         int minTeachers = game.getLevel().getMinQuestions();
@@ -222,6 +223,7 @@ public class GameServiceImpl implements GameService {
             Cell cell = findCell(map, new Position(x, y));
             if (cell.getType() == Cell.CellType.EMPTY && cell.getItem() == null) {
                 cell.setItem(itemFactory.createItem(game.getLevel().toString(), game.getUsedQuestionIds(), false));
+                cell.setType(Cell.CellType.TEACHER);
                 teachersPlaced++;
             }
             attempts++;
@@ -241,6 +243,7 @@ public class GameServiceImpl implements GameService {
 
                 if (cell.getType() == Cell.CellType.EMPTY && cell.getItem() == null) {
                     cell.setItem(itemFactory.createItem(game.getLevel().toString(), game.getUsedQuestionIds(), true));
+                    cell.setType(Cell.CellType.FRIEND);
                     break;
                 }
                 attempts++;
