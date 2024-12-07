@@ -21,20 +21,19 @@ export const GameGrid: React.FC<GameGridProps> = ({
   const getCellContent = (x: number, y: number) => {
     const cell = cells.find(c => c.x === x && c.y === y);
     if (!cell) return '?';
-    
+
     if (x === currentPosition.x && y === currentPosition.y) {
-      console.log(cell);
       return '👤';
     }
-    
+
     if (!cell.explored) return '❓';
 
     switch (cell.type) {
       case 'WALL': return '🧱';
       case 'ENTRANCE': return '🚪';
       case 'EXIT': return '🚪';
-      default: return cell.type === 'TEACHER' ? '👨‍🏫' : 
-               cell.type === 'FRIEND' ? '🧙‍♂️' : '⬜';
+      default: return cell.type === 'TEACHER' ? '👨‍🏫' :
+        cell.type === 'FRIEND' ? '👬' : '⬜';
     }
   };
 
@@ -79,8 +78,8 @@ export const GameGrid: React.FC<GameGridProps> = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: '1.5em',
-                background: x === currentPosition.x && y === currentPosition.y 
-                  ? 'var(--blue-3)' 
+                background: x === currentPosition.x && y === currentPosition.y
+                  ? 'var(--blue-3)'
                   : 'var(--gray-1)',
               }}
             >
