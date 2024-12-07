@@ -43,4 +43,10 @@ public class GameController {
         Game game = gameService.answerQuestion(gameId, request.getQuestionId(), request.getAnswer());
         return ResponseEntity.ok(game);
     }
+
+    @PostMapping("/{gameId}/next-level")
+    public ResponseEntity<Game> progressToNextLevel(@PathVariable String gameId) {
+        Game game = gameService.progressToNextLevel(gameId);
+        return ResponseEntity.ok(game);
+    }
 } 
