@@ -69,4 +69,5 @@ export interface Game {
   score: number;
   startedAt: string;
   usedQuestionIds: string[];
+  message?: string;
 } 

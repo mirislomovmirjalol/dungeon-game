@@ -7,6 +7,7 @@ import { GameInfoBar } from './components/GameInfoBar';
 import { CurrentQuestionDialog } from './components/CurrentQuestionDialog';
 import { GameOverDialog } from './components/GameOverDialog';
 import { LeaderBoardDialog } from './components/LeaderBoardDialog';
+import { MessageDialog } from './components/MessageDialog';
 
 export default function App() {
   const {
@@ -22,6 +23,8 @@ export default function App() {
     handleAnswer,
     handleGameOver,
     handleNextLevel,
+    message,
+    closeMessage,
   } = useGameState();
 
   return (
@@ -64,6 +67,10 @@ export default function App() {
             onChangeLevel={setGameLevel}
             onStart={handleStartGame}
           />
+        )}
+
+        {message && (
+          <MessageDialog message={message} onClose={closeMessage} />
         )}
       </Flex>
     </Container>

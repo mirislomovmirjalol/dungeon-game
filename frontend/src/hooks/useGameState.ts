@@ -10,6 +10,7 @@ export function useGameState() {
   const [playerName, setPlayerName] = useState('');
   const [gameLevel, setGameLevel] = useState<GameLevel>('EASY');
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   const { data: game } = useQuery({
     queryKey: ['game', gameId],
@@ -24,6 +25,7 @@ export function useGameState() {
       setGameId(newGame.id);
       queryClient.setQueryData(['game', newGame.id], newGame);
       setStartDialogOpen(false);
+      setMessage(newGame?.message ?? null);
     },
     onError: () => setError('Failed to start game. Please try again.')
   });
@@ -36,6 +38,7 @@ export function useGameState() {
       if (updatedGame.status !== 'IN_PROGRESS' && updatedGame.status !== 'LEVEL_COMPLETE') {
         queryClient.invalidateQueries({ queryKey: ['game', updatedGame.id] });
       }
+      setMessage(updatedGame?.message ?? null);
     },
     onError: () => setError('Failed to move. Please try again.')
   });
@@ -48,6 +51,7 @@ export function useGameState() {
       if (updatedGame.status !== 'IN_PROGRESS') {
         queryClient.invalidateQueries({ queryKey: ['game', updatedGame.id] });
       }
+      setMessage(updatedGame?.message ?? null);
     },
     onError: () => setError('Failed to answer question. Please try again.')
   });
@@ -82,6 +86,10 @@ export function useGameState() {
     startGameMutation.mutate({ playerName, level: nextLevel });
   };
 
+  const closeMessage = () => {
+    setMessage(null);
+  };
+
   return {
     game,
     error,
@@ -95,5 +103,7 @@ export function useGameState() {
     handleAnswer,
     handleGameOver,
     handleNextLevel,
+    message,
+    closeMessage,
   };
 }
