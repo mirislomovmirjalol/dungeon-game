@@ -25,22 +25,8 @@ public class GameEventListener {
         Leaderboard entry = new Leaderboard();
         entry.setPlayerName(game.getPlayerName());
         entry.setLevel(game.getLevel());
-        entry.setScore(calculateScore(game));
+        entry.setScore(game.getScore());
         entry.setCompletedAt(Instant.now());
         leaderboardRepository.save(entry);
-    }
-
-    private int calculateScore(Game game) {
-        int score = game.getPowerPoints();
-        
-        score += game.getInventory().getAnsweredQuestions().size() * 50;
-        
-        score *= switch (game.getLevel()) {
-            case EASY -> 1;
-            case MEDIUM -> 1.5;
-            case HARD -> 2;
-        };
-        
-        return score;
     }
 } 
