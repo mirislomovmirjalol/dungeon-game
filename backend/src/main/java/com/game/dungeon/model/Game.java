@@ -8,11 +8,16 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Game model contains all the state information for a player's game including
+ * their progress, inventory, position, and score.
+ */
 @Data
 @Document(collection = "games")
 public class Game {
     @Id
     private String id;
+
     private String playerName;
     private GameLevel level;
     private int powerPoints;
@@ -28,6 +33,12 @@ public class Game {
     private int score;
     private String message;
 
+    /**
+     * Calculates and updates the player's score based on:
+     * - Base score from map size
+     * - Bonus from remaining power points
+     * - Bonus from correctly answered questions
+     */
     public void updateScore() {
         int baseScore = level.getMapSize() * 100;
         int powerBonus = powerPoints * 2;
