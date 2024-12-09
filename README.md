@@ -110,3 +110,7 @@ Each difficulty level has different characteristics:
 - 50 initial power points
 - 3 power points per move
 - Minimum 25 questions to complete
+
+## Author
+
+[![Author](https://img.shields.io/badge/Author-Jalol%20Mirislomov-blue.svg)](https://github.com/mirislomovmirjalol)
