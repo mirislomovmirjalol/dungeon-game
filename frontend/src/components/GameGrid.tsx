@@ -71,15 +71,15 @@ export const GameGrid: React.FC<GameGridProps> = ({
             <Box
               key={`${x}-${y}`}
               style={{
-                width: '40px',
-                height: '40px',
+                width: 'auto',
+                height: 'auto',
                 border: '1px solid var(--gray-5)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: '1.5em',
                 background: x === currentPosition.x && y === currentPosition.y
-                  ? 'var(--blue-3)'
+                  ? 'var(--ruby-4)'
                   : 'var(--gray-1)',
               }}
             >
